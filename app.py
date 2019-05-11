@@ -4,58 +4,85 @@ import re
 
 class PyCsv:
 
+    # This list is updated after each change and can be used for quick access to CSV values
+    cached_values = []
+
     # Constructor
     def __init__(self, file_name):
         self.connection = re.sub('[.csv]', '', file_name) + ".csv"
+        self.get_values()
 
     # Get values from CSV
     def get_values(self):
         try:
             with open(self.connection, "r") as f:
                 if f.readable():
-                    return list(csv.reader(f))[0]
+                    self.cached_values = list(csv.reader(f))[0]
                 else:
-                    return None
+                    self.cached_values = None
         except Exception as err:
             print(err)
         finally:
             f.close()
+            return self.cached_values
 
     # Append a value to CSV file
     def append_value(self, val):
         try:
             with open(self.connection, "a") as f:
-                f.write(self.__prepend_comma(self.__remove_commas(val)))
+                if self.cached_values is None:
+                    f.write(self.__remove_commas(val))
+                else:
+                    f.write(self.__prepend_comma(self.__remove_commas(val)))
         except Exception as err:
             print(err)
         finally:
             f.close()
-            return self.get_values()
+            self.cached_values = self.get_values()
+            return self.cached_values
 
     # Bulk add values to CSV file
     def bulk_add(self, values):
         try:
             temp = ""
-            for v in values:
-                temp = temp + self.__prepend_comma(v)
+            for index, v in enumerate(values):
+                if index is 0 and self.cached_values is None:
+                    temp = temp + v
+                else:
+                    temp = temp + self.__prepend_comma(v)
             with open(self.connection, "a") as f:
                 f.write(temp)
         except Exception as err:
             print(err)
         finally:
             f.close()
-            return self.get_values()
+            self.cached_values = self.get_values()
+            return self.cached_values
+
+    # Removes a value from the CSV file by index
+    def remove_value(self, index):
+        try:
+            temp = self.cached_values
+            del temp[index]
+            self.delete_values()
+            self.cached_values = self.bulk_add(temp)
+        except Exception as err:
+            print(err)
+        finally:
+            return self.cached_values
 
     # Delete contents of CSV file
     def delete_values(self):
         try:
             with open(self.connection, "w") as f:
-                f.write("")
+                if self.cached_values is not None:
+                    f.write("")
         except Exception as err:
             print(err)
         finally:
             f.close()
-            return []
+            self.cached_values = None
+            return self.cached_values
 
     # Add comma to start of string
     @staticmethod

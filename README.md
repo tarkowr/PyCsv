@@ -12,7 +12,9 @@ PyCsv is the easiest way to connect to and use a CSV file in Python.
 
 #### Get CSV File Content
 Returns a list of strings from the CSV file.  
-`data = pycsv.get_values()`
+`data = pycsv.get_values()`  
+OR  
+`data = pycsv.cached_values` &nbsp; &nbsp;**Preferred**
 
 #### Append a Value to the CSV File
 Returns a list of strings from the updated CSV file.  
@@ -21,6 +23,10 @@ Returns a list of strings from the updated CSV file.
 #### Bulk Add Values to the CSV File
 Returns a list of strings from the updated CSV file.     
 `data = pycsv.bulk_add(["Rich", "Jon", "James"])`
+
+#### Remove Value from CSV File by Index
+Returns a list of strings from the updated CSV file.     
+`data = pycsv.remove_value(2)`
 
 #### Delete the Contents of the CSV File
 Returns an empty list.  
