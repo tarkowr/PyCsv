@@ -84,6 +84,25 @@ class PyCsv:
             self.cached_values = None
             return self.cached_values
 
+    # Rewrites the contents of CSV file into one line
+    def rewrite_file(self):
+        temp = []
+        try:
+            with open(self.connection, "r") as f:
+                if f.readable():
+                    self.cached_values = list(csv.reader(f))
+            for row in self.cached_values:
+                for val in row:
+                    if val is not '':
+                        temp.append(val)
+            self.delete_values()
+            self.bulk_add(temp)
+        except Exception as err:
+            print(err)
+        finally:
+            f.close()
+            return self.cached_values
+
     # Add comma to start of string
     @staticmethod
     def __prepend_comma(val):
@@ -93,4 +112,3 @@ class PyCsv:
     @staticmethod
     def __remove_commas(val):
         return re.sub('[,]', '', val)
-
