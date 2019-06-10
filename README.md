@@ -38,7 +38,7 @@ Returns a list of strings from the updated CSV file.
 
 #### Delete the Contents of the CSV File
 Returns an empty list.  
-`data = pycsv.delete_contents()`
+`data = pycsv.delete_values()`
 
 ### Thank you for using PyCsv!
 
